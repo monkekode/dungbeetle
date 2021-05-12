@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "playwright": "^1.11.0",
+    "sprintf-js": "^1.1.2"
+  }
+}
