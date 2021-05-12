@@ -38,14 +38,18 @@ class DungBeetle {
 				this.checkHolders.bind(this)
 			]
 
+			let reasonShit;
+
 			for (const step of steps) {
-				const reasonShit = await step(id);
+				reasonShit = await step(id);
 
 				if (reasonShit) {
-					console.log("SHIT:", reasonShit);
+					console.log("💩💩💩", reasonShit);
 					break;
 				}
 			}
+
+			if (! reasonShit) console.log("🚀🚀🚀🚀🚀");
 
 			console.log("");
 		}
@@ -169,9 +173,9 @@ function sleep(ms) {
 	const page = await context.newPage();
 	const db = new DungBeetle(page);
 
-	// while (true) {
-	await db.run();
-	// }
+	while (true) {
+		await db.run();
+	}
 
 	console.log("Bye");
 
