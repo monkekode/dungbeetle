@@ -31,28 +31,28 @@ class DungBeetle {
 			this.shitSeen[id] = true;
 
 			console.log("checking", shitCoins[id], 'https://bscscan.com/token/' + id, "https://poocoin.app/tokens/" + id);
-
-			const steps = [
-				this.checkVolume.bind(this),
-				this.checkPoocoin.bind(this),
-				this.checkHolders.bind(this)
-			]
-
-			let reasonShit;
-
-			for (const step of steps) {
-				reasonShit = await step(id);
-
-				if (reasonShit) {
-					console.log("💩💩💩", reasonShit);
-					break;
-				}
-			}
-
-			if (! reasonShit) console.log("🚀🚀🚀🚀🚀");
-
-			console.log("");
+			await this.checkShitcoin(id);
 		}
+	}
+
+	async checkShitcoin(id) {
+		const steps = [
+			this.checkVolume.bind(this),
+			this.checkPoocoin.bind(this),
+			this.checkHolders.bind(this)
+		]
+
+		let reasonShit;
+
+		for (const step of steps) {
+			reasonShit = await step(id);
+
+			if (reasonShit) {
+				return console.log("💩💩💩\n", reasonShit);
+			}
+		}
+
+		console.log("🚀🚀🚀🚀🚀\n");
 	}
 
 	async checkVolume(id) {
@@ -173,8 +173,12 @@ function sleep(ms) {
 	const page = await context.newPage();
 	const db = new DungBeetle(page);
 
-	while (true) {
-		await db.run();
+	if (process.env.ID) {
+		await db.checkShitcoin(process.env.ID);
+	} else {
+		while (true) {
+			await db.run();
+		}
 	}
 
 	console.log("Bye");
