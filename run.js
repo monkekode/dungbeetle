@@ -38,8 +38,9 @@ class DungBeetle {
 	async checkShitcoin(id) {
 		const steps = [
 			this.checkVolume.bind(this),
-			this.checkPoocoin.bind(this),
-			this.checkHolders.bind(this)
+			this.openBlank.bind(this),
+			this.checkHolders.bind(this),
+			this.checkPoocoin.bind(this)
 		]
 
 		let reasonShit;
@@ -48,11 +49,15 @@ class DungBeetle {
 			reasonShit = await step(id);
 
 			if (reasonShit) {
-				return console.log("💩💩💩\n", reasonShit);
+				return console.log("💩💩💩", reasonShit, "\n");
 			}
 		}
 
 		console.log("🚀🚀🚀🚀🚀\n");
+	}
+
+	async openBlank() {
+		await this.page.goto('about:blank');
 	}
 
 	async checkVolume(id) {
