@@ -2,7 +2,7 @@
 
 // https://bscscan.com/tokentxns
 
-const { chromium } = require("playwright");
+const { firefox } = require("playwright");
 const { sprintf } = require("sprintf-js");
 
 class DungBeetle {
@@ -168,7 +168,7 @@ function sleep(ms) {
 }
 
 (async () => {
-	const browser = await chromium.launch({headless: false}); // poocoin uses cloudflare -> doesn't work headless
+	const browser = await firefox.launch({headless: false}); // poocoin uses cloudflare -> doesn't work headless
 	const context = await browser.newContext();
 	const page = await context.newPage();
 	const db = new DungBeetle(page);
