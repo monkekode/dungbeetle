@@ -168,26 +168,36 @@ class DungBeetle {
 	}
 }
 
-function sleep(ms) {
+async function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-(async () => {
-	const browser = await firefox.launch({headless: false}); // poocoin uses cloudflare -> doesn't work headless
-	const context = await browser.newContext();
-	const page = await context.newPage();
-	const db = new DungBeetle(page);
-
-	if (process.env.ID) {
-		await db.checkShitcoin(process.env.ID);
-	} else {
-		while (true) {
-			await db.run();
+async function makeBrowser() {
+	return await firefox.launch({
+		headless: false, // poocoin uses cloudflare -> doesn't work headless
+		firefoxUserPrefs: {
+			"places.history.enabled": false,
+			"browser.sessionstore.max_tabs_undo": 0
 		}
+	});
+}
+
+(async () => {
+	let browser = await makeBrowser();
+	let context = await browser.newContext();
+	const db = new DungBeetle(await context.newPage());
+
+	for (let i = 0; i < 1000000; i++) {
+		if (! (i % 5)) { // refresh page to clear memory
+			console.log("Refreshing browser");
+
+			await browser.close();
+			browser = await makeBrowser();
+			context = await browser.newContext();
+			db.page = await context.newPage();
+		}
+
+		await db.run();
 	}
-
-	console.log("Bye");
-
-	await browser.close();
 })();
 
