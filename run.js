@@ -9,6 +9,7 @@ class DungBeetle {
 	constructor(page) {
 		this.page = page;
 		this.shitSeen = {};
+		this.shitcoinsChecked = 0;
 	}
 
 	async run() {
@@ -31,7 +32,17 @@ class DungBeetle {
 			this.shitSeen[id] = true;
 
 			console.log("checking", shitCoins[id], 'https://bscscan.com/token/' + id, "https://poocoin.app/tokens/" + id);
-			await this.checkShitcoin(id);
+
+			for (let attempt = 0; attempt < 10; attempt++) {
+				try {
+					await this.checkShitcoin(id);
+					break;
+				} catch (e) {
+					console.log("attempt", attempt, "error", e);
+				}
+			}
+
+			this.shitcoinsChecked++;
 		}
 	}
 
@@ -187,14 +198,15 @@ async function makeBrowser() {
 	let context = await browser.newContext();
 	const db = new DungBeetle(await context.newPage());
 
-	for (let i = 0; i < 1000000; i++) {
-		if (! (i % 5)) { // refresh page to clear memory
+	while (true) {
+		if (db.shitcoinsChecked >= 50) { // refresh page to clear memory
 			console.log("Refreshing browser");
 
 			await browser.close();
 			browser = await makeBrowser();
 			context = await browser.newContext();
 			db.page = await context.newPage();
+			db.shitcoinsChecked = 0;
 		}
 
 		await db.run();
